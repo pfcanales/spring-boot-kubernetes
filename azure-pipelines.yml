@@ -12,10 +12,12 @@ stages:
     displayName: 'SAST Work'
     steps:
     - task: Maven@4
+      displayName: 'Maven Build'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
@@ -29,6 +31,7 @@ stages:
         projectKey: 'dvilchesbcn_spring-boot-kubernetes'
         projectName: 'spring-boot-kubernetes'
     - task: Maven@4
+      displayName: 'Maven Sonar Cloud Analisys'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
