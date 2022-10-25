@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class Controller {
-
+    public String password = "estoy en duro";
     @Autowired
     private UserConfig userConfig;
 
