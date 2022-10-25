@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.h2.security.SHA256;
 
 @Service
 public class UserService {
@@ -13,11 +12,7 @@ public class UserService {
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
 
     public List<User> getUser(String containName) {
-        String inputString = "en duro!!!! nooo!!";
-        byte[] key         = inputString.getBytes();
-
-        String hashedPass  = SHA256.getHMAC(key, message);  // Noncompliant
-        
+        String inputPasword = "en duro!!!! nooo!!";
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
 
