@@ -23,7 +23,6 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
-    - script: find / -name "*.jar"
 
     - task: SonarCloudPrepare@1
       inputs:
@@ -45,7 +44,6 @@ stages:
         sonarQubeRunAnalysis: true
         sqMavenPluginVersionChoice: 'latest'
 
-    - script: find / -name "*.jar"
     - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
@@ -59,11 +57,22 @@ stages:
   - job: SCAtWork
     displayName: 'SCA Work'
     steps:
+    - task: Maven@4
+      displayName: 'Maven Build'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
     - script: find $(Build.SourcesDirectory) -name "*.jar"
     - task: dependency-check-build-task@6
       inputs:
         projectName: 'spring-boot-kubernetes'
-        scanPath: '$(Build.SourcesDirectory)'
+        scanPath: '$(Build.SourcesDirectory)/target'
         format: 'HTML'
 
 - stage: ContainerSecurity
