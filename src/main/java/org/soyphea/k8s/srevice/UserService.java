@@ -13,6 +13,9 @@ public class UserService {
 
     public List<User> getUser(String containName) {
         String inputPasword = "en duro!!!! nooo!!";
+
+        String query = "SELECT * FROM users WHERE user = '" + containName + "' AND pass = '" + inputPasword + "'"; // Unsafe
+
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
 
