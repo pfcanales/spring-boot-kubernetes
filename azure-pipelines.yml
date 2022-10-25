@@ -44,11 +44,11 @@ stages:
   - job: SCAtWork
     displayName: 'SCA Work'
     steps:
-    - script: "Do SCA work"
+    - script: echo 'Do SCA work'
 
 - stage: ContainerSecurity
   jobs:
   - job: ContainerSecurityWork
     displayName: 'Container Security Work'
     steps:
-    - script: "Do Container Security work"
+    - script: echo 'Do Container Security work'
