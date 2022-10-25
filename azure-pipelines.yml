@@ -56,7 +56,12 @@ stages:
   - job: SCAtWork
     displayName: 'SCA Work'
     steps:
-    - script: echo 'Do SCA work'
+    - script: find $(Build.SourcesDirectory) -name "*.jar"
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'spring-boot-kubernetes'
+        scanPath: '$(Build.SourcesDirectory)'
+        format: 'HTML'
 
 - stage: ContainerSecurity
   jobs:
