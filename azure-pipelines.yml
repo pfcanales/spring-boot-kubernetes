@@ -84,6 +84,7 @@ stages:
           echo "Stop pipeline execution because dependency check detected" $variable "HIGH Vulnerabilities"
           exit 1;
         fi;
+        displayName: 'Valida Vulnerabilidades Altas'
 
 - stage: ContainerSecurity
   jobs:
