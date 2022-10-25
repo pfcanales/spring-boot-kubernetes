@@ -11,12 +11,23 @@ stages:
   - job: SASTWork
     displayName: 'SAST Work'
     steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'conexion con sonarcloud'
         organization: 'dvilchesbcn'
         scannerMode: 'MSBuild'
-        projectKey: 'spring-boot-kubernetes'
+        projectKey: 'dvilchesbcn_spring-boot-kubernetes'
+        projectName: 'spring-boot-kubernetes'
     - task: Maven@4
       inputs:
         mavenPomFile: 'pom.xml'
@@ -27,7 +38,7 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: true
-        sqMavenPluginVersionChoice: 'pom'
+        sqMavenPluginVersionChoice: 'latest'
 - stage: SCA
   jobs:
   - job: SCAtWork
