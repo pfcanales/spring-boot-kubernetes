@@ -20,8 +20,8 @@ stages:
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
         effectivePomSkip: false
-        sonarQubeRunAnalysis: false
-        
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'pom'
 - stage: SCA
   jobs:
   - job: SCAtWork
