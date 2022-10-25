@@ -73,10 +73,18 @@ stages:
       inputs:
         projectName: 'spring-boot-kubernetes'
         scanPath: '$(Build.SourcesDirectory)/target'
-        format: 'XML, HTML, CSV, JSON, JUNIT, ALL'
+        format: 'ALL'
         reportsDirectory: '$(Build.SourcesDirectory)/dependency'
-    - script: find $(Build.SourcesDirectory)/ -name "*"
-    
+    - script: |
+        find $(Build.SourcesDirectory)/dependency -name "*"
+        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
+        echo $variable " HIGH dependency check detected"
+        if [ $variable -gt 0 ];
+        then 
+          echo "Stop pipeline execution because dependency check detected" $variable "HIGH Vulnerabilities"
+          exit 1;
+        fi;
+
 - stage: ContainerSecurity
   jobs:
   - job: ContainerSecurityWork
