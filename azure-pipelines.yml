@@ -23,6 +23,8 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    - script: find / -name "*.jar"
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'conexion con sonarcloud'
@@ -42,7 +44,8 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: true
         sqMavenPluginVersionChoice: 'latest'
-        
+
+    - script: find / -name "*.jar"
     - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
