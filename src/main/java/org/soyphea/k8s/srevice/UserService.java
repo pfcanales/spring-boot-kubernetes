@@ -11,8 +11,15 @@ public class UserService {
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
     
-    String key = "gb09ym9ydoolp3w886d0tciczj6ve9kszqd65u7d126040gwy86xqimjpuuc788g";
-    SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase("test.db", key, null);
+    URL url = new URL("https://example.org/");
+    HttpsURLConnection urlConnection = (HttpsURLConnection)url.openConnection();
+    urlConnection.setHostnameVerifier(new HostnameVerifier() {
+        @Override
+        public boolean verify(String requestedHost, SSLSession remoteServerSession) {
+            return true;  // Noncompliant
+        }
+    });
+    InputStream in = urlConnection.getInputStream();
     
     public List<User> getUser(String containName) {
 
