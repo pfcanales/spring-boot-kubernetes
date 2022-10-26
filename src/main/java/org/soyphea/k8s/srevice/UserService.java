@@ -10,10 +10,7 @@ import java.util.stream.Collectors;
 public class UserService {  
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
-    
-    byte[] salt = "notrandom".getBytes();
-    PBEKeySpec spec = new PBEKeySpec(chars, salt, 10000, 256);
-    
+       
     public List<User> getUser(String containName) {
 
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
