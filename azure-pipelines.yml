@@ -37,4 +37,13 @@ stages:
         sonarQubeRunAnalysis: true
         sqMavenPluginVersionChoice: 'latest'
 
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+    
+    - task: sonarcloud-buildbreaker@2
+      inputs:
+        SonarCloud: 'spring-boot-kubernetes'
+        organization: 'pfcanales'
+    
     
