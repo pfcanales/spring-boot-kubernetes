@@ -12,16 +12,13 @@ public class UserService {
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
        
     public List<User> getUser(String containName) {
-
-        SecureRandom sr = new SecureRandom();
-        //sr.setSeed(123456L); // Noncompliant
-        //int v = sr.next(32);
-
-        //sr = new SecureRandom("abcdefghijklmnop".getBytes("us-ascii")); // Noncompliant
-        //v = sr.next(32);
         
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
     
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+     String json = "{\"key\":\""+req.getParameter("value")+"\"}";
+     JSONObject jo = new JSONObject(json); // Noncompliant
+    }
 
 }
