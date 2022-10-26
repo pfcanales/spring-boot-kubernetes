@@ -31,9 +31,6 @@ public class UserService {
 
         NullCipher nc = new NullCipher(); // Noncompliant: the NullCipher class provides an "identity cipher" one that does not transform or encrypt the plaintext in any way.
       }
-      catch(NoSuchAlgorithmException|NoSuchPaddingException e)
-      {
-      }
     }
 
 }
