@@ -76,15 +76,13 @@ stages:
         format: 'ALL'
         reportsDirectory: '$(Build.SourcesDirectory)/dependency'
     - script: |
-        find $(Build.SourcesDirectory)/dependency -name "*"
         variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
-        echo $variable " HIGH dependency check detected"
-        if [ $variable -gt 0 ];
+        echo $variable "HIGH Vulnerabilities detected with dependency-check"
+        if [ $variable -gt 70 ];
         then 
-          echo "Stop pipeline execution because dependency check detected" $variable "HIGH Vulnerabilities"
+          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
           exit 1;
         fi;
-        displayName: 'Valida Vulnerabilidades Altas'
 
 - stage: ContainerSecurity
   jobs:
