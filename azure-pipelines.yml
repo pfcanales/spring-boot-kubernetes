@@ -18,4 +18,9 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
     
-    
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'spring-boot-kubernetes'
+        organization: 'pfcanales'
+        projectKey: 'pfcanales-spring-boot-kubernetes'
+        projectName: 'spring-boot-kubernetes'
