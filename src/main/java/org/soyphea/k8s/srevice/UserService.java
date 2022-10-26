@@ -16,14 +16,15 @@ public class UserService {
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
     
-    protected void configure(HttpSecurity http) throws Exception {
-      http.authorizeRequests()
-        .antMatchers("/resources/**", "/signup", "/about").permitAll() // Compliant
-        .antMatchers("/admin/**").hasRole("ADMIN")
-        .antMatchers("/admin/login").permitAll() // Noncompliant; the pattern "/admin/login" should appear before "/admin/**"
-        .antMatchers("/**", "/home").permitAll()
-        .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')") // Noncompliant; the pattern "/db/**" should occurs before "/**"
-        .and().formLogin().loginPage("/login").permitAll().and().logout().permitAll();
-    }
+    // Set up the environment for creating the initial context
+    Hashtable<String, Object> env = new Hashtable<String, Object>();
+    env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+    env.put(Context.PROVIDER_URL, "ldap://localhost:389/o=JNDITutorial");
+
+    // Use anonymous authentication
+    env.put(Context.SECURITY_AUTHENTICATION, "none"); // Noncompliant
+
+    // Create the initial context
+    DirContext ctx = new InitialDirContext(env);
 
 }
