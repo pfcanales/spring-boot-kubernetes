@@ -52,10 +52,42 @@ stages:
 #        SonarCloud: 'conexion con sonarcloud'
 #        organization: 'dvilchesbcn'
 
-- stage: SCA
+#- stage: SCA
+#  jobs:
+#  - job: SCAtWork
+#    displayName: 'SCA Work'
+#    steps:
+#    - task: Maven@4
+#      displayName: 'Maven Build'
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        publishJUnitResults: true
+#        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#        javaHomeOption: 'JDKVersion'
+#        mavenVersionOption: 'Default'
+#        mavenAuthenticateFeed: false
+#        effectivePomSkip: false
+#        sonarQubeRunAnalysis: false
+#    - script: find $(Build.SourcesDirectory) -name "*.jar"
+#    - task: dependency-check-build-task@6
+#      inputs:
+#        projectName: 'spring-boot-kubernetes'
+#        scanPath: '$(Build.SourcesDirectory)/target'
+#        format: 'ALL'
+#        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+#    - script: |
+#        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
+#        echo $variable "HIGH Vulnerabilities detected with dependency-check"
+#        if [ $variable -gt 0 ];
+#        then 
+#          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
+#          exit 1;
+#        fi;
+
+- stage: ContainerSecurity
   jobs:
-  - job: SCAtWork
-    displayName: 'SCA Work'
+  - job: ContainerSecurityWork
+    displayName: 'Container Security Work'
     steps:
     - task: Maven@4
       displayName: 'Maven Build'
@@ -63,30 +95,35 @@ stages:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
-    - script: find $(Build.SourcesDirectory) -name "*.jar"
-    - task: dependency-check-build-task@6
+    - task: DockerInstaller@0
       inputs:
-        projectName: 'spring-boot-kubernetes'
-        scanPath: '$(Build.SourcesDirectory)/target'
-        format: 'ALL'
-        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+        dockerVersion: '17.09.0-ce'
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'conexion con docker hub'
+        command: 'login'
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'conexion con docker hub'
+        repository: 'dvilchesbcn/spring-boot-kubernetes'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        tags: 'latest'
     - script: |
-        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
-        echo $variable "HIGH Vulnerabilities detected with dependency-check"
-        if [ $variable -gt 70 ];
-        then 
-          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
-          exit 1;
-        fi;
-
-- stage: ContainerSecurity
-  jobs:
-  - job: ContainerSecurityWork
-    displayName: 'Container Security Work'
-    steps:
-    - script: echo 'Do Container Security work'
+        sudo apt-get install -y rpm
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+        trivy image dvilchesbcn/spring-boot-kubernetes:latest
+      displayName: Image Scan
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'conexion con docker hub'
+        repository: 'dvilchesbcn/spring-boot-kubernetes'
+        command: 'push'
+        tags: 'latest'
