@@ -8,14 +8,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {  
-    
-    NodeList signatureElement = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
 
-    XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
-    DOMValidateContext valContext = new DOMValidateContext(new KeyValueKeySelector(), signatureElement.item(0)); // Noncompliant
-    XMLSignature signature = fac.unmarshalXMLSignature(valContext);
-
-    boolean signatureValidity = signature.validate(valContext);
+    public void run(javax.servlet.http.HttpServletRequest request) throws ClassNotFoundException {
+        String name = request.getParameter("name");
+        Class clazz = Class.forName(name);  // Noncompliant
+    }
     
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
