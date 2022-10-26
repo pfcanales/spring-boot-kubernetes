@@ -6,84 +6,80 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-#- stage: SAST
-#  jobs:
-#  - job: SASTWork
-#    displayName: 'SAST Work'
-#    steps:
-#    - task: Maven@4
-#      displayName: 'Maven Build'
-#      inputs:
-#        mavenPomFile: 'pom.xml'
-#        publishJUnitResults: true
-#        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-#        codeCoverageToolOption: 'JaCoCo'
-#        javaHomeOption: 'JDKVersion'
-#        mavenVersionOption: 'Default'
-#        mavenAuthenticateFeed: false
-#        effectivePomSkip: false
-#        sonarQubeRunAnalysis: false
-
-#    - task: SonarCloudPrepare@1
-#      inputs:
-#        SonarCloud: 'conexion con sonarcloud'
-#        organization: 'dvilchesbcn'
-#        scannerMode: 'MSBuild'
-#        projectKey: 'dvilchesbcn_spring-boot-kubernetes'
-#        projectName: 'spring-boot-kubernetes'
-#    - task: Maven@4
-#      displayName: 'Maven Sonar Cloud Analisys'
-#      inputs:
-#        mavenPomFile: 'pom.xml'
-#        publishJUnitResults: true
-#        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-#        javaHomeOption: 'JDKVersion'
-#        mavenVersionOption: 'Default'
-#        mavenAuthenticateFeed: false
-#        effectivePomSkip: false
-#        sonarQubeRunAnalysis: true
-#        sqMavenPluginVersionChoice: 'latest'
-
-#    - task: SonarCloudPublish@1
-#      inputs:
-#        pollingTimeoutSec: '300'
-#    - task: sonarcloud-buildbreaker@2
-#      inputs:
-#        SonarCloud: 'conexion con sonarcloud'
-#        organization: 'dvilchesbcn'
-
-#- stage: SCA
-#  jobs:
-#  - job: SCAtWork
-#    displayName: 'SCA Work'
-#    steps:
-#    - task: Maven@4
-#      displayName: 'Maven Build'
-#      inputs:
-#        mavenPomFile: 'pom.xml'
-#        publishJUnitResults: true
-#        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-#        javaHomeOption: 'JDKVersion'
-#        mavenVersionOption: 'Default'
-#        mavenAuthenticateFeed: false
-#        effectivePomSkip: false
-#        sonarQubeRunAnalysis: false
-#    - script: find $(Build.SourcesDirectory) -name "*.jar"
-#    - task: dependency-check-build-task@6
-#      inputs:
-#        projectName: 'spring-boot-kubernetes'
-#        scanPath: '$(Build.SourcesDirectory)/target'
-#        format: 'ALL'
-#        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
-#    - script: |
-#        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
-#        echo $variable "HIGH Vulnerabilities detected with dependency-check"
-#        if [ $variable -gt 0 ];
-#        then 
-#          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
-#          exit 1;
-#        fi;
-
+- stage: SAST
+  jobs:
+  - job: SASTWork
+    displayName: 'SAST Work'
+    steps:
+    - task: Maven@4
+      displayName: 'Maven Build'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'conexion con sonarcloud'
+        organization: 'dvilchesbcn'
+        scannerMode: 'MSBuild'
+        projectKey: 'dvilchesbcn_spring-boot-kubernetes'
+        projectName: 'spring-boot-kubernetes'
+    - task: Maven@4
+      displayName: 'Maven Sonar Cloud Analisys'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'latest'
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+    - task: sonarcloud-buildbreaker@2
+      inputs:
+        SonarCloud: 'conexion con sonarcloud'
+        organization: 'dvilchesbcn'
+- stage: SCA
+  jobs:
+  - job: SCAtWork
+    displayName: 'SCA Work'
+    steps:
+    - task: Maven@4
+      displayName: 'Maven Build'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    - script: find $(Build.SourcesDirectory) -name "*.jar"
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'spring-boot-kubernetes'
+        scanPath: '$(Build.SourcesDirectory)/target'
+        format: 'ALL'
+        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+    - script: |
+        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
+        echo $variable "HIGH Vulnerabilities detected with dependency-check"
+        if [ $variable -gt 0 ];
+        then 
+          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
+          exit 1;
+        fi;
 - stage: ContainerSecurity
   jobs:
   - job: ContainerSecurityWork
