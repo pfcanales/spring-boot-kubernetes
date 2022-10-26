@@ -13,8 +13,12 @@ public class UserService {
        
     public List<User> getUser(String containName) {
 
-        KeyPairGenerator keyPairGen1 = KeyPairGenerator.getInstance("RSA");
-        keyPairGen1.initialize(1024); // Noncompliant
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(123456L); // Noncompliant
+        int v = sr.next(32);
+
+        sr = new SecureRandom("abcdefghijklmnop".getBytes("us-ascii")); // Noncompliant
+        v = sr.next(32);
         
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
