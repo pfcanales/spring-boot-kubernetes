@@ -12,8 +12,7 @@ public class UserService {
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
     
     byte[] salt = "notrandom".getBytes();
-    PBEParameterSpec cipherSpec = new PBEParameterSpec(salt, 10000); // Noncompliant, predictable salt
-    PBEKeySpec spec = new PBEKeySpec(chars, salt, 10000, 256); // Noncompliant, predictable salt
+    PBEKeySpec spec = new PBEKeySpec(chars, salt, 10000, 256);
     
     public List<User> getUser(String containName) {
 
