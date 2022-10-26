@@ -41,13 +41,5 @@ public class ControllerTest {
     public void test_ok() throws Exception {
         mockMvc.perform(get("/k8s/Dara")).andExpect(MockMvcResultMatchers.status().isOk());
     }
-    protected void finalize() {   // Noncompliant; no call to super.finalize();
-      releaseSomeResources();
-    }
-
-    protected void finalize() {
-      super.finalize();  // Noncompliant; this call should come last
-      releaseSomeResources();
-    }
 }
 
