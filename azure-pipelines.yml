@@ -89,10 +89,24 @@ stages:
       inputs:
         dockerVersion: '17.09.0-ce'
       
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-spring-boot'
+        repository: 'patriciopcg/spring-boot'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        tags: 'latest'
+    
+    - script: |
+          sudo apt-get install -y rpm
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+          sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+          trivy image patriciopcg/spring-boot-kubernetes:latest
+      displayName: Image Scan
     
     - task: Docker@2
       inputs:
         containerRegistry: 'docker-spring-boot'
-        command: 'build'
-        Dockerfile: '**/Dockerfile'
+        repository: 'patriciopcg/spring-boot'
+        command: 'push'
         tags: 'latest'
