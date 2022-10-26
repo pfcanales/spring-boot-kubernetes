@@ -16,9 +16,12 @@ public class UserService {
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
     }
     
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-     String json = "{\"key\":\""+req.getParameter("value")+"\"}";
-     JSONObject jo = new JSONObject(json); // Noncompliant
-    }
+    NodeList signatureElement = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+
+    XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+    DOMValidateContext valContext = new DOMValidateContext(new KeyValueKeySelector(), signatureElement.item(0)); // Noncompliant
+    XMLSignature signature = fac.unmarshalXMLSignature(valContext);
+
+    boolean signatureValidity = signature.validate(valContext);
 
 }
