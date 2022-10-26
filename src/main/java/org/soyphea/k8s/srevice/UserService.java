@@ -8,12 +8,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {  
-
-    //public void run(javax.servlet.http.HttpServletRequest request) throws ClassNotFoundException {
-    //    String name = request.getParameter("name");
-    //    Class clazz = Class.forName(name);  // Noncompliant
-    //}
-    
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
        
