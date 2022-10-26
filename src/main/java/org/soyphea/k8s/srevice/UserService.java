@@ -9,13 +9,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {  
     
-    List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
-       
-    public List<User> getUser(String containName) {
-        
-        return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
-    }
-    
     NodeList signatureElement = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
 
     XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
@@ -23,5 +16,13 @@ public class UserService {
     XMLSignature signature = fac.unmarshalXMLSignature(valContext);
 
     boolean signatureValidity = signature.validate(valContext);
-
+    
+    
+    List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
+       
+    public List<User> getUser(String containName) {
+        
+        return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
+    }
+    
 }
