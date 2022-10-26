@@ -7,6 +7,7 @@ stages:
   - job: Job
     displayName: 'SAST sonarCloud'
     steps:
+    
     - task: Maven@4
       inputs:
         mavenPomFile: 'pom.xml'
@@ -22,7 +23,7 @@ stages:
       inputs:
         SonarCloud: 'spring-boot-kubernetes'
         organization: 'pfcanales'
-        projectKey: 'pfcanales-spring-boot-kubernetes'
+        projectKey: 'pfcanales_spring-boot-kubernetes'
         projectName: 'spring-boot-kubernetes'
 
     - task: Maven@4
