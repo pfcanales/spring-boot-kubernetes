@@ -17,20 +17,7 @@ import java.util.Set;
 public class UserService {  
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
-
-    public int getPort() {
-	return this.port;
-    }
-    
-    protected final File createTempDir(String prefix) {
-	File tempDir = File.createTempFile(prefix + ".", "." + getPort());
-	tempDir.delete();
-	tempDir.mkdir();
-	tempDir.deleteOnExit();
-	return tempDir;
-
-    }
-    
+   
     public List<User> getUser(String containName) {
         
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
