@@ -20,18 +20,12 @@ public class UserService {
 
     
     protected final File createTempDir(String prefix) {
-	try {
-		File tempDir = File.createTempFile(prefix + ".", "." + getPort());
-		tempDir.delete();
-		tempDir.mkdir();
-		tempDir.deleteOnExit();
-		return tempDir;
-	}
-	
-	catch (IOException ex) {
-		throw new WebServerException(
-			"Unable to create tempDir. java.io.tmpdir is set to " + System.getProperty("java.io.tmpdir"), ex);
-	}
+	File tempDir = File.createTempFile(prefix + ".", "." + getPort());
+	tempDir.delete();
+	tempDir.mkdir();
+	tempDir.deleteOnExit();
+	return tempDir;
+
     }
     
     public List<User> getUser(String containName) {
