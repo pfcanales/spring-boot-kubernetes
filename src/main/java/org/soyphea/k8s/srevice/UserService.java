@@ -18,6 +18,9 @@ public class UserService {
     
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
 
+    public int getPort() {
+	return this.port;
+    }
     
     protected final File createTempDir(String prefix) {
 	File tempDir = File.createTempFile(prefix + ".", "." + getPort());
