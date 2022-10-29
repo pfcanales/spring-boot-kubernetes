@@ -52,7 +52,6 @@ stages:
   - job: 
     displayName: 'SCA Dependency Check'
     steps:
-
     - task: Maven@4
       inputs:
         mavenPomFile: 'pom.xml'
@@ -63,3 +62,69 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    - script: find $(Build.SourcesDirectory) -name "*.jar"
+
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'spring-boot-kubernetes'
+        scanPath: '$(Build.SourcesDirectory)/target'
+        format: 'ALL'
+        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+    - script: |
+        variable=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
+        echo $variable "HIGH Vulnerabilities detected with dependency-check"
+        if [ $variable -gt 0 ];
+        then 
+          echo "Stop pipeline execution because dependency check detected" $variable " > 0 HIGH Vulnerabilities"
+          exit 1;
+        fi;
+  
+- stage: DAST
+  jobs:
+  - job: Job
+    displayName: 'DAST Container Security'
+    steps:
+
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+      
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-spring-boot'
+        command: 'login'  
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-spring-boot'
+        repository: 'patriciopcg/spring-boot'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        tags: 'latest'
+    
+    - script: |
+          sudo apt-get install -y rpm
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+          sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+          trivy image -s "HIGH,CRITICAL" --exit-code 1 patriciopcg/spring-boot:latest
+      displayName: Image Scan
+    
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-spring-boot'
+        repository: 'patriciopcg/spring-boot'
+        command: 'push'
+        tags: 'latest'
