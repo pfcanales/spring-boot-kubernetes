@@ -17,12 +17,7 @@ import java.util.Set;
 public class UserService {  
        
     List<User> users = Arrays.asList(new User(1, "Dara"), new User(2, "Seyha"));
-
-    public void run(javax.servlet.http.HttpServletRequest request) throws ClassNotFoundException {
-        String name = request.getParameter("name");
-        Class clazz = Class.forName(name);  // Noncompliant
-    }
-    
+   
     public List<User> getUser(String containName) {
         
         return users.stream().filter(user -> user.getName().contains(containName)).collect(Collectors.toList());
