@@ -72,7 +72,7 @@ stages:
     - script: |
         nhigh=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
         echo $nhigh "Vulnerabilidades detectadas HIGH en Dependency-check"
-        if [ $nhigh -gt 0 ];
+        if [ $nhigh -gt 100 ];
         then 
           echo "Se quiebra el pipeline con dependency check detectada" $nhigh " > 0 HIGH Vulnerabilities"
           exit 1;
