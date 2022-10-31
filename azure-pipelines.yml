@@ -112,13 +112,7 @@ stages:
         sudo apt-get install -y rpm
         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image -s "UNKNOWN,LOW,MEDIUM" --exit-code 0 patriciopcg/spring-boot:latest
-        trivy image -s "HIGH,CRITICAL" --exit-code 1 patriciopcg/spring-boot:latest
-        #if [ $TRIVY_EXIT_CODE -gt 0 ];
-        #then 
-        #  echo "Se quiebra el pipeline con Container Security vulnerabilidad de tipo alta detectada"
-        #  exit 1;
-        #fi;        
+        trivy image -s "HIGH,CRITICAL" --exit-code 1 patriciopcg/spring-boot:latest      
       displayName: Image Scan
     
     - task: Docker@2
