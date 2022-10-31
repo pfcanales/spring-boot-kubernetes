@@ -1,7 +1,83 @@
 pool:
   vmImage: ubuntu-latest
 
+stages:
+- stage: SAST
+  jobs:
+  - job: Job
+    displayName: 'SAST sonarCloud'
+    steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
 
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'spring-boot-kubernetes'
+        organization: 'pfcanales'
+        projectKey: 'pfcanales-spring-boot-kubernetes'
+        projectName: 'spring-boot-kubernetes'
+
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'latest'
+
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+
+    - task: sonarcloud-buildbreaker@2
+      inputs:
+        SonarCloud: 'spring-boot-kubernetes'
+        organization: 'pfcanales'
+
+- stage: SCA
+  jobs:
+  - job: 
+    displayName: 'SCA Dependency Check'
+    steps:
+    - task: Maven@4
+      displayName: 'Maven Build'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+  
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'spring-boot-kubernetes'
+        scanPath: '$(Build.SourcesDirectory)/target'
+        format: 'ALL'
+        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+  
+    - script: |
+        nhigh=$(grep ",HIGH," $(Build.SourcesDirectory)/dependency/dependency-check-report.csv | wc -l)
+        echo $nhigh "Vulnerabilidades detectadas HIGH en Dependency-check"
+        if [ $nhigh -gt 100 ];
+        then 
+          echo "Se quiebra el pipeline con dependency check detectada" $nhigh " > 0 HIGH Vulnerabilities"
+          exit 1;
+        fi;
 
 - stage: DAST
   jobs:
