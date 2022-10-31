@@ -116,7 +116,7 @@ stages:
         trivy image --vuln-type --exit-code 1 patriciopcg/spring-boot:latest
         echo "TRIVY_EXIT_CODE==>" $TRIVY_EXIT_CODE 
         echo $exit-code 
-        echo ´exitCode´
+        echo exitCode
         echo "FIN"
         if [ $TRIVY_EXIT_CODE -gt 0 ];
         then 
