@@ -112,8 +112,8 @@ stages:
         sudo apt-get install -y rpm
         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        $TRIVY_EXIT_CODE='0'
-        trivy image -s "HIGH,CRITICAL" --exit-code 1 patriciopcg/spring-boot:latest
+        #trivy image -s "HIGH,CRITICAL" --exit-code 1 patriciopcg/spring-boot:latest  
+        trivy image --vuln-type --exit-code 1 patriciopcg/spring-boot:latest
         echo "TRIVY_EXIT_CODE==>" $TRIVY_EXIT_CODE 
         echo $exit-code 
         echo ´exitCode´
